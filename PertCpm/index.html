@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>General Foundry, Inc.</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">
+            <img src="img/logo.png" width="30" height="30" alt="General Foundry, Inc.">
+        </a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Proyecto</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contacto</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="text-center">General Foundry, Inc.</h1>
+        <p class="text-center">Instalación del sistema de filtración de aire</p>
+        
+        <h2>Agregar Actividades</h2>
+        <form id="activityForm">
+            <div class="form-group">
+                <label for="activity">Actividad</label>
+                <input type="text" class="form-control" id="activity" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Descripción</label>
+                <input type="text" class="form-control" id="description" required>
+            </div>
+            <div class="form-group">
+                <label for="predecessors">Predecesoras Inmediatas (separadas por coma)</label>
+                <input type="text" class="form-control" id="predecessors">
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Actividad</button>
+        </form>
+        
+        <h2>Agregar Estimaciones de Tiempo</h2>
+        <form id="timeEstimateForm">
+            <div class="form-group">
+                <label for="estimateActivity">Actividad</label>
+                <input type="text" class="form-control" id="estimateActivity" required>
+            </div>
+            <div class="form-group">
+                <label for="optimistic">Optimista (a)</label>
+                <input type="number" class="form-control" id="optimistic" required>
+            </div>
+            <div class="form-group">
+                <label for="mostLikely">Más Probable (m)</label>
+                <input type="number" class="form-control" id="mostLikely" required>
+            </div>
+            <div class="form-group">
+                <label for="pessimistic">Pesimista (b)</label>
+                <input type="number" class="form-control" id="pessimistic" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Estimación de Tiempo</button>
+        </form>
+
+        <h2>Calcular Ruta Crítica</h2>
+        <button id="calculateCriticalPathBtn" class="btn btn-danger">Calcular Ruta Crítica</button>
+        
+        <h2>Actividades del Proyecto</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Actividad</th>
+                    <th>Descripción</th>
+                    <th>Predecesoras Inmediatas</th>
+                </tr>
+            </thead>
+            <tbody id="activityTable">
+                <!-- Filled dynamically by JavaScript -->
+            </tbody>
+        </table>
+        
+        <h2>Estimación de Tiempos</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Actividad</th>
+                    <th>Optimista (a)</th>
+                    <th>Más Probable (m)</th>
+                    <th>Pesimista (b)</th>
+                    <th>Tiempo Esperado (t)</th>
+                    <th>Varianza</th>
+                </tr>
+            </thead>
+            <tbody id="timeEstimates">
+                <!-- Filled dynamically by JavaScript -->
+            </tbody>
+        </table>
+        
+        <h2>Ruta Crítica</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Actividad</th>
+                    <th>IC</th>
+                    <th>TC</th>
+                    <th>IL</th>
+                    <th>TL</th>
+                    <th>Holgura</th>
+                </tr>
+            </thead>
+            <tbody id="criticalPath">
+                <!-- Filled dynamically by JavaScript -->
+            </tbody>
+        </table>
+
+        <h2>Diagrama de Gantt</h2>
+        <div id="ganttChart"></div>
+
+        <h2>Diagrama de Red PERT</h2>
+        <div id="pertChart"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="js/scripts.js"></script>
+</body>
+</html>
