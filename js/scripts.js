@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log("DOM fully loaded and parsed");
 
     const activities = {};
+    let weeklyCost = 0;
 
     // Manejo del formulario para agregar actividades
     document.getElementById("activityForm").addEventListener("submit", function(event) {
@@ -11,22 +12,14 @@ document.addEventListener("DOMContentLoaded", function() {
         const description = document.getElementById("description").value.trim();
         const predecessors = document.getElementById("predecessors").value.split(',').map(p => p.trim()).filter(p => p);
 
-        // Verificar que la actividad no exista ya
         if (activities[activity]) {
             alert(`La actividad ${activity} ya existe.`);
             return;
         }
 
-        // Agregar la nueva actividad al objeto de actividades
-        activities[activity] = { description, predecessors: predecessors.length ? predecessors : ['-'], t: 0, variance: 0, ES: 0, EF: 0, LS: 0, LF: 0, slack: 0, isCritical: false };
+        activities[activity] = { description, predecessors: predecessors.length ? predecessors : ['-'], t: 0, variance: 0, ES: 0, EF: 0, LS: 0, LF: 0, slack: 0, isCritical: false, cost: 0 };
 
-        // Verificar la inicialización
-        console.log(`Actividad agregada: ${activity}`, activities[activity]);
-
-        // Limpiar el formulario
         document.getElementById("activityForm").reset();
-
-        // Actualizar la tabla de actividades
         displayActivities();
     });
 
@@ -39,31 +32,33 @@ document.addEventListener("DOMContentLoaded", function() {
         const probable = parseFloat(document.getElementById("mostLikely").value);
         const pesimista = parseFloat(document.getElementById("pessimistic").value);
 
-        // Verificar que la actividad exista
         if (activities[activity]) {
             const t = (optimista + 4 * probable + pesimista) / 6;
             const variance = Math.pow((pesimista - optimista) / 6, 2);
+            const cost = t * weeklyCost;
             activities[activity].optimista = optimista;
             activities[activity].probable = probable;
             activities[activity].pesimista = pesimista;
             activities[activity].t = t;
             activities[activity].variance = variance;
-
-            // Verificar la actualización de propiedades
-            console.log(`Estimación de tiempo agregada: ${activity}`, activities[activity]);
+            activities[activity].cost = cost;
         } else {
             alert(`La actividad ${activity} no existe. Por favor, agréguela primero.`);
             return;
         }
 
-        // Limpiar el formulario
         document.getElementById("timeEstimateForm").reset();
-
-        // Actualizar las tablas de estimaciones de tiempo
         displayTimeEstimates();
     });
 
-    // Función para mostrar las actividades en la tabla
+    // Manejo del formulario para agregar costo por semana
+    document.getElementById("costForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        weeklyCost = parseFloat(document.getElementById("weeklyCost").value);
+        alert(`Costo por semana actualizado a ${weeklyCost}`);
+        displayTimeEstimates();
+    });
+
     function displayActivities() {
         const tableBody = document.getElementById("activityTable");
         tableBody.innerHTML = '';
@@ -80,7 +75,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // Función para mostrar las estimaciones de tiempo en la tabla
     function displayTimeEstimates() {
         const tableBody = document.getElementById("timeEstimates");
         tableBody.innerHTML = '';
@@ -94,23 +88,21 @@ document.addEventListener("DOMContentLoaded", function() {
                     <td>${activity.pesimista ?? ''}</td>
                     <td>${activity.t.toFixed(2)}</td>
                     <td>${activity.variance.toFixed(2)}</td>
+                    <td>${activity.cost.toFixed(2)}</td>
                 </tr>
             `;
             tableBody.insertAdjacentHTML("beforeend", row);
         }
     }
 
-    // Función para calcular la ruta crítica
     function calculateCriticalPath() {
         console.log("Calculando la ruta crítica...");
 
-        // Inicializar tiempos de inicio y fin más tempranos
         for (const key in activities) {
             activities[key].ES = activities[key].predecessors.includes('-') ? 0 : Math.max(...activities[key].predecessors.map(p => activities[p].EF));
             activities[key].EF = activities[key].ES + activities[key].t;
         }
 
-        // Pase hacia adelante para calcular ES y EF
         for (const key in activities) {
             const activity = activities[key];
             if (!activity.predecessors.includes('-')) {
@@ -124,21 +116,19 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
 
-        // Inicializar tiempos de inicio y fin más tardíos
         const projectDuration = Math.max(...Object.values(activities).map(a => a.EF));
         for (const key in activities) {
             activities[key].LF = projectDuration;
             activities[key].LS = activities[key].LF - activities[key].t;
         }
 
-        // Pase hacia atrás para calcular LS y LF
         const activityKeys = Object.keys(activities).reverse();
         for (const key of activityKeys) {
             const activity = activities[key];
             if (!activity.predecessors.includes('-')) {
                 for (const predecessorKey of activity.predecessors) {
                     const predecessor = activities[predecessorKey];
-                    if (predecessor) {  // Añadir verificación para evitar errores
+                    if (predecessor) {
                         predecessor.LF = Math.min(predecessor.LF, activity.LS);
                         predecessor.LS = predecessor.LF - predecessor.t;
                     }
@@ -146,18 +136,13 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
 
-        // Calcular holgura e identificar la ruta crítica
         for (const key in activities) {
             const activity = activities[key];
             activity.slack = activity.LS - activity.ES;
             activity.isCritical = activity.slack === 0;
-
-            // Verificar propiedades calculadas
-            console.log(`Propiedades calculadas para ${key}:`, activity);
         }
     }
 
-    // Función para mostrar la ruta crítica en la tabla
     function displayCriticalPath() {
         const tableBody = document.getElementById("criticalPath");
         tableBody.innerHTML = '';
@@ -177,7 +162,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // Función para crear el diagrama de Gantt
     function createGanttChart() {
         const ganttData = Object.keys(activities).map(key => {
             return {
@@ -229,7 +213,6 @@ document.addEventListener("DOMContentLoaded", function() {
             .attr("fill", d => d.isCritical ? "red" : "blue");
     }
 
-    // Función para crear el diagrama de red PERT
     function createPertChart() {
         const nodes = [];
         const links = [];
@@ -246,7 +229,6 @@ document.addEventListener("DOMContentLoaded", function() {
             'Fin': { x: 1050, y: 200 },
         };
 
-        // Agregar nodos de inicio y fin
         nodes.push({ id: 'Inicio', label: 'Inicio', description: '', duration: 0 });
         nodes.push({ id: 'Fin', label: 'Fin', description: '', duration: 0 });
 
@@ -264,7 +246,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
 
-            // Añadir enlaces al nodo final si no tiene sucesores
             if (!Object.values(activities).some(act => act.predecessors.includes(key))) {
                 links.push({ source: key, target: 'Fin' });
             }
@@ -330,7 +311,6 @@ document.addEventListener("DOMContentLoaded", function() {
             .attr("y2", d => nodePositions[d.target].y + 25);
     }
 
-    // Manejo del botón para calcular la ruta crítica y crear los diagramas
     document.getElementById("calculateCriticalPathBtn").addEventListener("click", function() {
         calculateCriticalPath();
         displayCriticalPath();

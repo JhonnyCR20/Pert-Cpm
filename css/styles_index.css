@@ -1,0 +1,52 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.jumbotron {
+    background: url('img/banner.jpg') no-repeat center center;
+    background-size: cover;
+    color: white;
+    padding: 10% 0;
+}
+
+.container {
+    max-width: 1140px; /* Asegura que el contenido no ocupe toda la pantalla */
+    margin: auto;
+    padding: 20px;
+}
+
+.carousel-item {
+    height: 50vh;
+    min-height: 300px;
+    background: no-repeat center center scroll;
+    background-size: cover;
+}
+
+.card {
+    margin-bottom: 20px;
+}
+
+footer {
+    background-color: rgba(0, 0, 0, 0.2);
+    text-align: center;
+    padding: 10px;
+}
+
+.carousel-caption {
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.carousel-caption h5, .carousel-caption p {
+    color: #fff; /* Color del texto */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Sombra para mejorar la legibilidad */
+}

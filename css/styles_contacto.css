@@ -1,0 +1,59 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; /* Fondo general de la página */
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.jumbotron {
+    position: relative;
+    background-color: #e9ecef; /* Fondo gris claro */
+    color: white;
+    padding: 10% 0;
+    margin-bottom: 0;
+    overflow: hidden;
+}
+
+.jumbotron::before {
+    content: "";
+    background: url('../img/banner.jpg') no-repeat center center;
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.6; /* Ajusta la opacidad según sea necesario */
+    z-index: 0;
+}
+
+.jumbotron .container {
+    position: relative;
+    z-index: 1;
+    color: #343a40; /* Color del texto sobre el fondo gris claro */
+}
+
+.container {
+    max-width: 1140px; /* Asegura que el contenido no ocupe toda la pantalla */
+    margin: auto;
+    padding: 20px;
+}
+
+.section {
+    background-color: #e9ecef; /* Fondo gris claro */
+    padding: 40px 0;
+}
+
+.footer {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: #343a40;
+}
+
+.card {
+    margin-bottom: 20px;
+}
